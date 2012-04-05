@@ -1,4 +1,5 @@
-==================
+jquery.selectall.js
+===================
 
 * Author: Seth Thomas (<seth@decipherinc.com>)
 * GitHub: <https://github.com/SethAThomas/jquery.selectall.js>
@@ -12,17 +13,23 @@ collection of checkboxes.
 Behaviour
 ---------
 
-* master - a checkbox designated as a 'select all' / 'select none' checkbox
-* slave - all other checkboxes within the set
+**terms**
+<ul>
+<li>master - a checkbox designated as a 'select all' / 'select none' checkbox</li>
+<li>slave - all other checkboxes within the set</li>
+</ul>
 
-* master is checked - all related checkboxes (masters and slaves) also become
-  checked
-* master is unchecked - all related checkboxes (masters and slaves) also
-  become unchecked
-* slave is checked - if all slaves are now checked then the related masters
-  will also become checked, otherwise nothing happens
-* slave is unchecked - all related masters become unchecked; this does **not**
-  trigger the master behaviour
+**behaviours**
+<ul>
+<li>master is checked - all related checkboxes (masters and slaves) also become
+  checked</li>
+<li>master is unchecked - all related checkboxes (masters and slaves) also
+  become unchecked</li>
+<li>slave is checked - if all slaves are now checked then the related masters
+  will also become checked, otherwise nothing happens</li>
+<li>slave is unchecked - all related masters become unchecked; this does **not**
+  trigger the master behaviour</li>
+</ul>
 
 How this works
 --------------
@@ -45,16 +52,16 @@ or you can store the options in the .date() of the root element(s):
 
     $('.someContent').data('js-selectall-opts', opts).selectall()
 
-Supported options:
+**Supported options**
 
 * **classFilter** - restricts the .selectall() functionality to 
 only those checkboxes that have the class(es) indicated; this
 can be a space delimited list of classes
-***
 
-    // only apply functionality to checkboxes that have both the
-    // 'foo' and 'bar' classes
-    $('.someContent').selectall({classFilter: 'foo bar'});
+<pre><code>// only apply functionality to checkboxes that have both the
+// 'foo' and 'bar' classes
+$('.someContent').selectall({classFilter: 'foo bar'});
+</code></pre>
 
 ### Removing
 
