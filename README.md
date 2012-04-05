@@ -1,5 +1,4 @@
-jquery.selectall.js
-===================
+==================
 
 * Author: Seth Thomas (<seth@decipherinc.com>)
 * GitHub: <https://github.com/SethAThomas/jquery.selectall.js>
@@ -36,8 +35,7 @@ classes use the namespace prefix 'js-selectall-'.
   checkboxes; convenient for allowing a label to toggle an associated
   checkbox(es)
 
-Options
--------
+### Options
 
 You can include an options object when invoking .selectall:
 
@@ -49,18 +47,16 @@ or you can store the options in the .date() of the root element(s):
 
 Supported options:
 
-* **classFilter** - restricts the .selectall() functionality to only those
-  checkboxes that have the class(es) indicated; this can be a space delimited
-  list of classes
+* **classFilter** - restricts the .selectall() functionality to 
+only those checkboxes that have the class(es) indicated; this
+can be a space delimited list of classes
+***
 
-    // only apply functionality to checkboxes that have both the 'foo'
-    // and 'bar' classes
-    $('.someContent').selectall({
-        classFilter: 'foo bar'
-    });
+    // only apply functionality to checkboxes that have both the
+    // 'foo' and 'bar' classes
+    $('.someContent').selectall({classFilter: 'foo bar'});
 
-Removing
---------
+### Removing
 
 You can remove the .selectall() functionality without harming the DOM content.
 
@@ -70,29 +66,28 @@ You can remove the .selectall() functionality without harming the DOM content.
     // remove it
     $('.someContent').data('js-selectall').destroy();
 
-Example
--------
+### Example
 
-<ol class="myList">
-  <li class="js-selectall-wrapper">
-    <input type="checkbox" class="js-selectall-selectall special" />
-    <span> all</span>
-  </li>
-  <li><input type="checkbox special" /> A</li>
-  <li><input type="checkbox special" /> B</li>
-  <li class="js-selectall-wrapper">
-    <input type="checkbox" />
-    <b> C</b>
-  </li>
-  <li><input type="checkbox" /> D</li>
-  <li><input type="checkbox" class="js-selectall-selectall" /> all</li>
-</ol>
+    <ol class="myList">
+      <li class="js-selectall-wrapper">
+        <input type="checkbox" class="js-selectall-selectall special" />
+        <span> all</span>
+      </li>
+      <li><input type="checkbox special" /> A</li>
+      <li><input type="checkbox special" /> B</li>
+      <li class="js-selectall-wrapper">
+        <input type="checkbox" />
+        <b> C</b>
+      </li>
+      <li><input type="checkbox" /> D</li>
+      <li><input type="checkbox" class="js-selectall-selectall" /> all</li>
+    </ol>
 
-// add .selectall() functionality to all of the contained checkboxes
-$('.myList').selectall();
+    // add .selectall() functionality to all of the contained checkboxes
+    $('.myList').selectall();
 
-// removes the select-all behaviour w/o harming the markup
-$('.myList').data('js-selectall').destroy();
+    // removes the select-all behaviour w/o harming the markup
+    $('.myList').data('js-selectall').destroy();
 
-// only those checkboxes with class "special" will have .selectall() functionality
-$('.myList').selectall({classFilter: 'special'});
+    // only those checkboxes with class "special" will have .selectall() functionality
+    $('.myList').selectall({classFilter: 'special'});
