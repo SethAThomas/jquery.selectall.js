@@ -3,6 +3,7 @@ jquery.selectall.js
 
 * Author: Seth Thomas (<seth@decipherinc.com>)
 * GitHub: <https://github.com/SethAThomas/jquery.selectall.js>
+* Requirements: jQuery 1.5+
 
 Purpose
 -------
