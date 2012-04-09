@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Jquery.selectall.js : jQuery plug-in that allows 'select all' / 'select none' checkbox functionality on a specified set of checkboxes" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Jquery.selectall.js</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/SethAThomas/jquery.selectall.js">Fork Me on GitHub</a>
+
+          <h1 id="project_title">Jquery.selectall.js</h1>
+          <h2 id="project_tagline">jQuery plug-in that allows 'select all' / 'select none' checkbox functionality on a specified set of checkboxes</h2>
+
+          <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/SethAThomas/jquery.selectall.js/zipball/master">Download this project as a .zip file</a>
+            <a class="tar_download_link" href="https://github.com/SethAThomas/jquery.selectall.js/tarball/master">Download this project as a tar.gz file</a>
+          </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>jquery.selectall.js</h1>
+
+<ul>
+<li>Author: Seth Thomas (<a href="mailto:seth@decipherinc.com">seth@decipherinc.com</a>)</li>
+<li>GitHub: <a href="https://github.com/SethAThomas/jquery.selectall.js">https://github.com/SethAThomas/jquery.selectall.js</a>
+</li>
+<li>Requirements: jQuery 1.5+</li>
+</ul><h2>Purpose</h2>
+
+<p>Adds 'select all' / 'select none' behaviour to specific checkbox(es) within a
+collection of checkboxes.</p>
+
+<h2>Behaviour</h2>
+
+<p><strong>terms</strong></p>
+
+<ul>
+<li>master - a checkbox designated as a 'select all' / 'select none' checkbox</li>
+<li>slave - all other checkboxes within the set</li>
+</ul><p><strong>behaviours</strong></p>
+
+<ul>
+<li>master is checked - all related checkboxes (masters and slaves) also become
+  checked</li>
+<li>master is unchecked - all related checkboxes (masters and slaves) also
+  become unchecked</li>
+<li>slave is checked - if all slaves are now checked then the related masters
+  will also become checked, otherwise nothing happens</li>
+<li>slave is unchecked - all related masters become unchecked; this does **not**
+  trigger the master behaviour</li>
+</ul><h2>How this works</h2>
+
+<p>You can designate behaviour by using specific jquery.selectall.js classes. All
+classes use the namespace prefix 'js-selectall-'.</p>
+
+<ul>
+<li>
+<strong>js-selectall-selectall</strong> - designates a checkbox as a master</li>
+<li>
+<strong>js-selectall-wrapper</strong> - clicks will be passed down to any contained
+checkboxes; convenient for allowing a label to toggle an associated
+checkbox(es)</li>
+</ul><h3>Options</h3>
+
+<p>You can include an options object when invoking .selectall:</p>
+
+<pre><code>$('.someContent').selectall(opts)
+</code></pre>
+
+<p>or you can store the options in the .date() of the root element(s):</p>
+
+<pre><code>$('.someContent').data('js-selectall-opts', opts).selectall()
+</code></pre>
+
+<p><strong>Supported options</strong></p>
+
+<ul>
+<li>
+<strong>classFilter</strong> - restricts the .selectall() functionality to 
+only those checkboxes that have the class(es) indicated; this
+can be a space delimited list of classes</li>
+</ul><pre><code>// only apply functionality to checkboxes that have both the
+// 'foo' and 'bar' classes
+$('.someContent').selectall({classFilter: 'foo bar'});
+</code></pre>
+
+<h3>Removing</h3>
+
+<p>You can remove the .selectall() functionality without harming the DOM content.</p>
+
+<pre><code>// add functionality
+$('.someContent').selectall();
+
+// remove it
+$('.someContent').data('js-selectall').destroy();
+</code></pre>
+
+<h3>Example</h3>
+
+<pre><code>&lt;ol class="myList"&gt;
+  &lt;li class="js-selectall-wrapper"&gt;
+    &lt;input type="checkbox" class="js-selectall-selectall special" /&gt;
+    &lt;span&gt; all&lt;/span&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;input type="checkbox special" /&gt; A&lt;/li&gt;
+  &lt;li&gt;&lt;input type="checkbox special" /&gt; B&lt;/li&gt;
+  &lt;li class="js-selectall-wrapper"&gt;
+    &lt;input type="checkbox" /&gt;
+    &lt;b&gt; C&lt;/b&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;input type="checkbox" /&gt; D&lt;/li&gt;
+  &lt;li&gt;&lt;input type="checkbox" class="js-selectall-selectall" /&gt; all&lt;/li&gt;
+&lt;/ol&gt;
+
+// add .selectall() functionality to all of the contained checkboxes
+$('.myList').selectall();
+
+// removes the select-all behaviour w/o harming the markup
+$('.myList').data('js-selectall').destroy();
+
+// only those checkboxes with class "special" will have .selectall() functionality
+$('.myList').selectall({classFilter: 'special'});
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Jquery.selectall.js maintained by <a href="https://github.com/SethAThomas">SethAThomas</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
