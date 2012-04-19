@@ -8,6 +8,16 @@ GitHub: https://github.com/SethAThomas/jquery.selectall.js
 
     var name = 'js-selectall';
 
+    function setChecked($checkboxes, value) {
+        $checkboxes.each(function () {
+            if (value === undefined) {
+                this.checked = !this.checked;
+            } else {
+                this.checked = value;
+            }
+        });
+    }
+
     function SelectAll(el, opts) {
         this.$el = $(el);
         this.$el.data(name, this);
@@ -19,134 +29,90 @@ GitHub: https://github.com/SethAThomas/jquery.selectall.js
         var meta = this.$el.data(name + '-opts');
         this.opts = $.extend(this.defaults, opts, meta);
 
-        var classFilter = (this.opts.classFilter ? '.' + this.opts.classFilter.split(' ').join('.') : '');
+        var classFilter = $.trim(this.opts.classFilter || '').replace(/\s+/g, ' ');
+        classFilter = classFilter ? '.' + classFilter.replace(' ', '.') : '';
 
         // pre-calculate the selectors, but do not cache the jQuery sets;
         // this way, content can be added and removed from the markup
 
         // ex:
-        // selectAll = 'input[type="checkbox"].foo.js-selectall-selectall'
-        this.selectors = {
-            wrappers: '.' + name + '-wrapper',
-            anyCheckbox: 'input[type="checkbox"]' + classFilter,
-            selectAll: 'input[type="checkbox"]' + classFilter + '.' + name + '-selectall',
-            nonSelectAll: 'input[type="checkbox"]' + classFilter + ':not(.' + name + '-selectall)'
-        };
+        // selectAlls = 'input[type="checkbox"].foo.js-selectall-selectall'
+        
+        var cWrapper   = '.' + name + '-wrapper',
+            cSelectAll = '.' + name + '-selectall';
 
-        this.init();
-    }
+        this.selectors = {};
+        this.selectors.wrappers      = cWrapper;
+        this.selectors.all           = 'input[type="checkbox"]' + classFilter;
+        this.selectors.selectAlls    = this.selectors.all + cSelectAll;
+        this.selectors.nonSelectAlls = this.selectors.all + ':not(' + cSelectAll + ')';
 
-    SelectAll.prototype.init = function _a_init() {
         var self = this;
 
-        // this handlers non-sense is necessary so that we can
-        // retain a reference to the event handlers for 
-        // undelegating. In jQuery 1.6+ we can undelegate using
-        // the namespace.
-        this.handlers = {
-            onClickSelectAll: function _a_onClickSelectAll(evt) {
-                var $el = $(this);
-
-                if ($el.is(':checked')) {
-                    self.selectAll();
-                } else {
-                    self.selectNone();
-                }
-
-                evt.stopImmediatePropagation();
-            },
-            onClickNonSelectAll: function _a_onClickNonSelectAll(evt) {
-                self.nonSelectAllChanged();
-
-                evt.stopImmediatePropagation();
-            },
-            onClickWrapper: function _a_onClickWrapper(evt) {
-                var $wrapper = $(this),
-                    nonSelectAllChanged = false;
-
-                // toggle all checkboxes inside the wrapper
-                // WARNING: this may cause very weird results if more than one checkbox
-                // is inside a wrapper, especially if it's a select-all checkbox
-                $(self.selectors.anyCheckbox, $wrapper).each(function _a_toggleCheckboxes() {
-                    var $el = $(this);
-                    if ($el.hasClass(name + '-selectall')) {
-                        if ($el.is(':checked')) {
-                            self.selectNone();
-                        } else {
-                            self.selectAll();
-                        }
-                    } else {
-                        if ($el.is(':checked')) {
-                            $el.removeAttr('checked');
-                        } else {
-                            $el.attr('checked', true);
-                        }
-                        nonSelectAllChanged = true;
-                    }
-                });
-
-                if (nonSelectAllChanged) {
-                    self.nonSelectAllChanged();
-                }
-
-                evt.stopImmediatePropagation();
+        this._handlers = {};
+        this._handlers.checkboxChanged = function _a_checkboxChanged(evt) {
+            var $el = $(this);
+            if ($el.is(cSelectAll)) {
+                self.setAll(this.checked);
+            } else {
+                self.update(true);
             }
         };
+        this._handlers.wrapperClicked = function _a_wrapperClicked(evt) {
+            if ($(evt.target).is(self.selectors.all)) {
+                // ignore clicks directly on a checkbox
+                return;
+            }
 
-        // clicking the 'select all / none'
-        this.$el.delegate(this.selectors.selectAll, 'click.' + name, this.handlers.onClickSelectAll);
+            var $wrapper = $(this),
+                $checkboxes = self.$getAll($wrapper);
+            setChecked($checkboxes); // toggle the checked property for each checkbox
+            $checkboxes.change();
+        };
 
-        // clicking any other checkbox
-        this.$el.delegate(this.selectors.nonSelectAll, 'click.' + name, this.handlers.onClickNonSelectAll);
+        this.$el
+            .delegate(this.selectors.wrappers, 'click.' + name,  this._handlers.wrapperClicked)
+            .delegate(this.selectors.all,      'change.' + name, this._handlers.checkboxChanged)
+        ;
 
-        // clicking any of the wrappers
-        this.$el.delegate(this.selectors.wrappers, 'click.' + name, this.handlers.onClickWrapper);
+        this.update();
+    }
 
-        // if any of the select-all checkboxes are initially checked then
-        // select everything
-        if ($(this.selectors.selectAll, this.$el).filter(':checked').length) {
-            this.selectAll();
-        }
-        // pretend that a non-select was changed, so that the select-all's
-        // will be updated if all / none of the non-selects are initially
-        // checked
-        this.nonSelectAllChanged();
+    SelectAll.prototype.$getSelectAlls = function _a_$getSelectAlls($context) {
+        return $(this.selectors.selectAlls, $context || this.$el);
     };
 
-    SelectAll.prototype.check = function _a_check(selector, value) {
-        // checks or unchecks (based on value) everything in the selector
-        if (value) {
-            $(selector, this.$el).attr('checked', true);
+    SelectAll.prototype.$getNonSelectAlls = function _a_$getNonSelectAlls($context) {
+        return $(this.selectors.nonSelectAlls, $context || this.$el);
+    };
+
+    SelectAll.prototype.$getAll = function _a_$getAll($context) {
+        return $(this.selectors.all, $context || this.$el);
+    };
+
+    SelectAll.prototype.setAll = function _a_setAll(value) {
+        setChecked(this.$getAll(), value);
+    };
+
+    SelectAll.prototype.update = function _a_update(ignoreSelectAllsCheck) {
+        var $selectAlls = this.$getSelectAlls();
+        
+        if (!ignoreSelectAllsCheck && $selectAlls.filter(':checked').length) {
+            // if any select-alls are checked, then everything gets checked
+            this.setAll(true);
         } else {
-            $(selector, this.$el).removeAttr('checked');
-        }
-    };
+            var $nonSelectAlls = this.$getNonSelectAlls(),
+                len = $nonSelectAlls.length;
 
-    SelectAll.prototype.selectAll = function _a_selectAll() {
-        // check all of the select-all checkboxes (there could be multiple)
-        this.check(this.selectors.selectAll, true);
-
-        // check all of the non-select-all checkboxes
-        this.check(this.selectors.nonSelectAll, true);
-    };
-
-    SelectAll.prototype.selectNone = function _a_selectNone() {
-        // uncheck all of the select-all checkboxes (there could be multiple)
-        this.check(this.selectors.selectAll, false);
-
-        // uncheck all of the non-select-all checkboxes
-        this.check(this.selectors.nonSelectAll, false);
-    };
-
-    SelectAll.prototype.nonSelectAllChanged = function _a_nonSelectAllChanged() {
-        var $checked = $(this.selectors.nonSelectAll, this.$el);
-
-        if ($checked.length === $checked.filter(':checked').length) {
-            // all of the non-select-all checkboxes are checked, so also check the select-all checkboxes
-            this.check(this.selectors.selectAll, true);
-        } else {
-            // not all of the non-select-all checkboxes are checked, so uncheck all select-all checkboxes
-            this.check(this.selectors.selectAll, false);
+            if (len) {
+                if (len === $nonSelectAlls.filter(':checked').length) {
+                    // if all the non-select-alls are checked, then check all of the
+                    // select-alls
+                    setChecked($selectAlls, true);
+                } else if (ignoreSelectAllsCheck) {
+                    setChecked($selectAlls, false);
+                }
+            }
         }
     };
 
@@ -154,9 +120,11 @@ GitHub: https://github.com/SethAThomas/jquery.selectall.js
         // removes the SelectAll functionality w/o harming the markup
 
         // in jQuery 1.6+ we'll be able to undelegate using the namespace
-        this.$el.undelegate(this.selectors.selectAll, 'click', this.handlers.onClickSelectAll);
-        this.$el.undelegate(this.selectors.nonSelectAll, 'click', this.handlers.onClickNonSelectAll);
-        this.$el.undelegate(this.selectors.wrappers, 'click', this.handlers.onClickWrapper);
+        // pre-1.6, we must undelegate each handler by function reference
+        this.$el
+            .undelegate(this.selectors.wrappers, 'click',  this._handlers.wrapperClicked)
+            .undelegate(this.selectors.all,      'change', this._handlers.checkboxChanged)
+        ;
 
         // .undelegate(namespace) requires jQuery 1.6+
         //this.$el.undelegate('.' + name);

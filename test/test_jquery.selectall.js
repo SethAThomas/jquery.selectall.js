@@ -16,10 +16,14 @@ $(function () {
     <b> C</b>                                                                    \
   </li>                                                                          \
   <li><input type="checkbox" class="special" /> D</li>                           \
-  <li><input type="checkbox" class="js-selectall-selectall special2" /> all</li> \
   <li>                                                                           \
-      <input type="radio" id="radioA" name="someRadio" />                        \
-      <input type="radio" id="radioB" name="someRadio" />                        \
+    <input type="checkbox" class="js-selectall-selectall special2" /> all        \
+  </li>                                                                          \
+  <li>                                                                           \
+      <input type="radio" id="radioA" name="someRadio" /> radioA                 \
+  </li>                                                                          \
+  <li>                                                                           \
+      <input type="radio" id="radioB" name="someRadio" /> radioB                 \
   </li>                                                                          \
 </ol>                                                                            \
         ',
@@ -73,27 +77,13 @@ $(function () {
     }
 
     function toggle(el) {
-        // checks / uncheckes the element
-        // will also click the element to trigger any
-        // .selectall() behaviour on the element (.selectall() may
-        // not be applied to the fragment yet)
-
-        // normally, the browser click event will have already toggled
-        // the "checked" property; .selectall() uses delegates, so it is
-        // too late to prevent the browser default behaviour; that means
-        // that .selectall() doesn't try to meddle in setting the checked
-        // setting, but instead just reacts to it being changed; we're
-        // mimicing the browser default behaviour here by explicitly changing
-        // the checked property
-
+        // "clicks" a checkbox
+        // this changes the .checked property; for some reason, I couldn't
+        // get .click() to trigger the "change" handler, even though it
+        // triggers fine normally; explicitly calling .change() to trigger
+        // the rest of the behavior
         var $el = $(el);
-
-        if ($el.is(':checked')) {
-            $el.removeAttr('checked');
-        } else {
-            $el.attr('checked', true);
-        }
-        $el.click();
+        $el.click().change();
     }
 
     $.fn.ut_toggle = function () {
@@ -144,6 +134,7 @@ $(function () {
         QUnit.module('jquery.selectall with default options', {
             setup: function () {
                 this.$content = $(content);
+                $('#qunit-fixture').append(this.$content);
                 this.opts = {};
                 this.MAX = 6;
             }
@@ -237,6 +228,7 @@ $(function () {
         QUnit.module('jquery.selectall with new checkboxes added dynamicly', {
             setup: function () {
                 this.$content = $(content);
+                $('#qunit-fixture').append(this.$content);
                 this.opts = {};
 
                 toggleTest.call(this, '', 0);
@@ -294,6 +286,7 @@ $(function () {
         QUnit.module('jquery.selectall with classFilter option', {
             setup: function () {
                 this.$content = $(content);
+                $('#qunit-fixture').append(this.$content);
                 this.opts = {classFilter: 'special'};
                 this.MAX = 4;
             }
